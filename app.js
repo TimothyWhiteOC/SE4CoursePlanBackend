@@ -7,6 +7,7 @@ var mysql = require('mysql');
 var dbconfig = require("./config/db.config");
 
 var coursesRouter = require('./routes/courses');
+var studentsRouter = require('./routes/students');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use(function(req, res, next) {
 });
 
 app.use('/courses', coursesRouter);
+app.use('/students', studentsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
