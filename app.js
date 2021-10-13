@@ -8,6 +8,7 @@ var dbconfig = require("./config/db.config");
 
 var coursesRouter = require('./routes/courses');
 var studentsRouter = require('./routes/students');
+var studentCoursesRouter = require('./routes/student-courses');
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use(function(req, res, next) {
 
 app.use('/courses', coursesRouter);
 app.use('/students', studentsRouter);
+app.use('/students', studentCoursesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
