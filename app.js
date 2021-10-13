@@ -32,8 +32,7 @@ app.use(function(req, res, next) {
 
 const corsOptions = {
   origin: '*',
-  methods: ['POST', 'GET', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS']
 }
 app.use(cors(corsOptions));
 
