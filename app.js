@@ -10,6 +10,8 @@ var cors = require("cors");
 var coursesRouter = require('./routes/courses');
 var studentsRouter = require('./routes/students');
 var studentCoursesRouter = require('./routes/student-courses');
+var degreesRouter = require('./routes/degrees');
+var degreeCoursesRouter = require('./routes/degree-courses');
 
 var app = express();
 
@@ -39,6 +41,8 @@ app.use(cors(corsOptions));
 app.use('/courses', coursesRouter);
 app.use('/students', studentsRouter);
 app.use('/students', studentCoursesRouter);
+app.use('/degrees', degreesRouter);
+app.use('/degrees', degreeCoursesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
