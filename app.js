@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mysql = require('mysql');
 var dbconfig = require("./config/db.config");
+var cors = require("cors");
 
 var coursesRouter = require('./routes/courses');
 var studentsRouter = require('./routes/students');
@@ -28,6 +29,12 @@ app.use(function(req, res, next) {
   res.locals.connection.connect();
   next();
 });
+
+const corsOptions = {
+  origin: '*',
+  methods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS']
+}
+app.use(cors(corsOptions));
 
 app.use('/courses', coursesRouter);
 app.use('/students', studentsRouter);
