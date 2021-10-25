@@ -41,7 +41,7 @@ function validate(course) {
 }
 
 router.get('/:semTerm/:semYear', function(req, res, next) {
-  res.locals.connection.query("SELECT * FROM semesters WHERE semTerm = '?' and semYear = ?", [req.params.semTerm, req.params.semYear], function(error, results, fields) {
+  res.locals.connection.query("SELECT * FROM semesters WHERE semTerm = ? and semYear = ?", [req.params.semTerm, req.params.semYear], function(error, results, fields) {
     if (error) {
       res.status(500);
       res.send(JSON.stringify({ status: 500, error: error, response: null }));
@@ -60,7 +60,7 @@ router.put('/:semTerm/:semYear', function(req, res, next) {
     res.send(errorMessage);
   }
   else {
-    res.locals.connection.query("UPDATE semesters SET ? WHERE semTerm = '?' and semYear = ?", [req.body, req.params.semTerm, req.params.semYear], function(error, results, fields) {
+    res.locals.connection.query("UPDATE semesters SET ? WHERE semTerm = ? and semYear = ?", [req.body, req.params.semTerm, req.params.semYear], function(error, results, fields) {
       if (error) {
         res.status(500);
         res.send(JSON.stringify({ status: 500, error: error, response: null }));
@@ -98,7 +98,7 @@ router.post('/', function(req, res, next) {
 });
 
 router.delete('/:semTerm/:semYear', function(req, res, next) {
-  res.locals.connection.query("DELETE FROM semesters WHERE semTerm = '?' and semYear = ?", [req.params.semTerm, req.params.semYear], function(error, results, fields) {
+  res.locals.connection.query("DELETE FROM semesters WHERE semTerm = ? and semYear = ?", [req.params.semTerm, req.params.semYear], function(error, results, fields) {
     if (error) {
       res.status(500);
       res.send(JSON.stringify({ status: 500, error: error, response: null }));
