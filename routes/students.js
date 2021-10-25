@@ -82,7 +82,7 @@ router.post('/', function(req, res, next) {
     res.send(errorMessage);
   }
   else {
-      res.locals.connection.query("INSERT INTO students VALUES ?", req.body, function(error, results, fields) {
+      res.locals.connection.query("INSERT INTO students SET ?", req.body, function(error, results, fields) {
       if (error) {
         res.status(500);
         res.send(JSON.stringify({ status: 500, error: error, response: null }));
