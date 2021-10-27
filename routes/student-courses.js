@@ -26,7 +26,7 @@ function validate(course) {
 }
 
 router.get('/:studentID/courses', function(req, res, next) {
-  res.locals.connection.query("SELECT * FROM student_courses WHERE studentID = ?", req.params.studentID, function(error, results, fields) {
+  res.locals.connection.query("SELECT sc.*, c.name, c.hours FROM student_courses sc, courses c, semesters s WHERE sc.studentID = ? AND c.courseNo = sc.courseNo AND s.semTerm = sc.semTerm and s.semYear = sc.semYear ORDER BY s.startDate", req.params.studentID, function(error, results, fields) {
     if (error) {
       res.status(500);
       res.send(JSON.stringify({ status: 500, error: error, response: null }));
