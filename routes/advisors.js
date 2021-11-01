@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var {authenticate, isAdminOrAdvisor, isAdminOrSameAdvisor, isAdmin} = require('../controllers/auth');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -40,7 +41,7 @@ function validate(course) {
   return errorMessage;
 }
 
-router.get('/:advisorID', function(req, res, next) {
+router.get('/:advisorID', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   res.locals.connection.query("SELECT * FROM advisors WHERE advisorID = ?", req.params.advisorID, function(error, results, fields) {
     if (error) {
       res.status(500);
@@ -53,7 +54,7 @@ router.get('/:advisorID', function(req, res, next) {
   });
 });
 
-router.put('/:advisorID', function(req, res, next) {
+router.put('/:advisorID', [authenticate, isAdminOrSameAdvisor], function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
@@ -75,7 +76,7 @@ router.put('/:advisorID', function(req, res, next) {
   }
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', [authenticate, isAdmin], function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
@@ -97,7 +98,7 @@ router.post('/', function(req, res, next) {
   }
 });
 
-router.delete('/:advisorID', function(req, res, next) {
+router.delete('/:advisorID', [authenticate, isAdmin], function(req, res, next) {
   res.locals.connection.query("DELETE FROM advisors WHERE advisorID = ?", req.params.advisorID, function(error, results, fields) {
     if (error) {
       res.status(500);

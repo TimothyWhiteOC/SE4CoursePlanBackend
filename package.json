@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "bundle": "mkdir deploy && cp -r config routes app.js package.json package-lock.json course-backend.service deploy && rm deploy/config/db.config.json && mv deploy/config/prod.db.config.json deploy/config/db.config.json"
+    "bundle": "mkdir deploy && cp -r config controllers routes app.js package.json package-lock.json course-backend.service deploy && rm deploy/config/db.config.json && mv deploy/config/prod.db.config.json deploy/config/db.config.json"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -12,6 +12,7 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "google-auth-library": "^7.10.1",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
