@@ -41,7 +41,7 @@ function validate(course) {
   return errorMessage;
 }
 
-router.get('/:studentID', [authenticate, isAdminOrAdvisor], function(req, res, next) {
+router.get('/:studentID', [authenticate, isAdminAdvisorOrSameStudent], function(req, res, next) {
   res.locals.connection.query("SELECT * FROM students WHERE studentID = ?", req.params.studentID, function(error, results, fields) {
     if (error) {
       res.status(500);

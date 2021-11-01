@@ -61,7 +61,7 @@ function isAdminOrSameAdvisor(req, res, next) {
 }
 
 function isAdminAdvisorOrSameStudent(req, res, next) {
-	if (req.user.role == 'admin' || req.user.role == 'advisor' || (req.user.role == 'student' && req.params.id == req.user.id)) next();
+	if (req.user.role == 'admin' || req.user.role == 'advisor' || (req.user.role == 'student' && req.params.studentID == req.user.id)) next();
 	else res.status(401).send({error:'Insufficient permissions'});
 }
 
