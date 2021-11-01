@@ -1,4 +1,5 @@
 var express = require('express');
+const { authenticate, isAdminOrAdvisor } = require('../controllers/auth');
 var router = express.Router();
 
 /* GET home page. */
@@ -58,7 +59,7 @@ router.get('/:courseNo', function(req, res, next) {
   });
 });
 
-router.put('/:courseNo', function(req, res, next) {
+router.put('/:courseNo', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
@@ -80,7 +81,7 @@ router.put('/:courseNo', function(req, res, next) {
   }
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
@@ -102,7 +103,7 @@ router.post('/', function(req, res, next) {
   }
 });
 
-router.delete('/:courseNo', function(req, res, next) {
+router.delete('/:courseNo', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   res.locals.connection.query("DELETE FROM courses WHERE courseNo = ?", req.params.courseNo, function(error, results, fields) {
     if (error) {
       res.status(500);

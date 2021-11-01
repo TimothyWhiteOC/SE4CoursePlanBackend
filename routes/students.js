@@ -1,4 +1,5 @@
 var express = require('express');
+const { authenticate, isAdminOrAdvisor, isAdminAdvisorOrSameStudent } = require('../controllers/auth');
 var router = express.Router();
 
 /* GET home page. */
@@ -40,7 +41,7 @@ function validate(course) {
   return errorMessage;
 }
 
-router.get('/:studentID', function(req, res, next) {
+router.get('/:studentID', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   res.locals.connection.query("SELECT * FROM students WHERE studentID = ?", req.params.studentID, function(error, results, fields) {
     if (error) {
       res.status(500);
@@ -53,7 +54,7 @@ router.get('/:studentID', function(req, res, next) {
   });
 });
 
-router.put('/:studentID', function(req, res, next) {
+router.put('/:studentID', [authenticate, isAdminAdvisorOrSameStudent], function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
@@ -75,7 +76,7 @@ router.put('/:studentID', function(req, res, next) {
   }
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
@@ -97,7 +98,7 @@ router.post('/', function(req, res, next) {
   }
 });
 
-router.delete('/:studentID', function(req, res, next) {
+router.delete('/:studentID', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   res.locals.connection.query("DELETE FROM students WHERE studentID = ?", req.params.studentID, function(error, results, fields) {
     if (error) {
       res.status(500);

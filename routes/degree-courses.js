@@ -1,4 +1,5 @@
 var express = require('express');
+const { authenticate, isAdminOrAdvisor } = require('../controllers/auth');
 var router = express.Router();
 
 function validate(course) {
@@ -30,7 +31,7 @@ router.get('/:majorID/courses', function(req, res, next) {
   });
 });
 
-router.post('/:majorID/courses', function(req, res, next) {
+router.post('/:majorID/courses', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
@@ -52,7 +53,7 @@ router.post('/:majorID/courses', function(req, res, next) {
   }
 });
 
-router.delete('/:majorID/courses/:courseNo', function(req, res, next) {
+router.delete('/:majorID/courses/:courseNo', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   res.locals.connection.query("DELETE FROM major_courses WHERE majorID = ? AND courseNo = ?", [req.params.majorID, req.params.courseNo], function(error, results, fields) {
     if (error) {
       res.status(500);
