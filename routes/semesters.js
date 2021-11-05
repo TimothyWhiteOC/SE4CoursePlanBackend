@@ -1,10 +1,9 @@
 var express = require('express');
-const { authenticate, isAdminOrAdvisor, isAdminAdvisorOrSameStudent } = require('../controllers/auth');
 var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.locals.connection.query("SELECT studentID, fName, lName FROM students", function(error, results, fields) {
+  res.locals.connection.query("SELECT * FROM semesters ORDER BY startDate", function(error, results, fields) {
     if (error) {
       res.status(500);
       res.send(JSON.stringify({ status: 500, error: error, response: null }));
@@ -21,28 +20,28 @@ router.get('/', function(req, res, next) {
 function validate(course) {
   var errorMessage = "[";
 
-  if (course.studentID == null || course.studentID.length == 0) {
+  if (course.semTerm == null || course.semTerm.length == 0) {
     errorMessage +=
-      '{"attributeName":"studentID", "message":"Must have studentID"}';
+      '{"attributeName":"semTerm", "message":"Must have term"}';
   }
-  if (course.fName == null || course.fName.length == 0) {
+  if (isNaN(parseInt(course.semYear))) {
     if (errorMessage.length > 1) errorMessage += ",";
-    errorMessage += '{"attributeName":"fName", "message":"Must have first name"}';
+    errorMessage += '{"attributeName":"semYear", "message":"Must have year"}';
   }
-  if (course.lName == null || course.lName.length == 0) {
+  if (course.startDate == null || course.startDate.length == 0) {
     if (errorMessage.length > 1) errorMessage += ",";
-    errorMessage += '{"attributeName":"lName", "message":"Must have last name"}';
+    errorMessage += '{"attributeName":"startDate", "message":"Must have start date"}';
   }
-  if (course.email == null || course.email.length == 0) {
+  if (course.endDate == null || course.endDate.length == 0) {
     if (errorMessage.length > 1) errorMessage += ",";
-    errorMessage += '{"attributeName":"email", "message":"Must have email"}';
+    errorMessage += '{"attributeName":"endDate", "message":"Must have end date"}';
   }
   errorMessage += "]";
   return errorMessage;
 }
 
-router.get('/:studentID', [authenticate, isAdminAdvisorOrSameStudent], function(req, res, next) {
-  res.locals.connection.query("SELECT * FROM students WHERE studentID = ?", req.params.studentID, function(error, results, fields) {
+router.get('/:semTerm/:semYear', function(req, res, next) {
+  res.locals.connection.query("SELECT * FROM semesters WHERE semTerm = ? and semYear = ?", [req.params.semTerm, req.params.semYear], function(error, results, fields) {
     if (error) {
       res.status(500);
       res.send(JSON.stringify({ status: 500, error: error, response: null }));
@@ -54,14 +53,14 @@ router.get('/:studentID', [authenticate, isAdminAdvisorOrSameStudent], function(
   });
 });
 
-router.put('/:studentID', [authenticate, isAdminAdvisorOrSameStudent], function(req, res, next) {
+router.put('/:semTerm/:semYear', function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
     res.send(errorMessage);
   }
   else {
-    res.locals.connection.query("UPDATE students SET ? WHERE studentID=?", [req.body, req.params.studentID], function(error, results, fields) {
+    res.locals.connection.query("UPDATE semesters SET ? WHERE semTerm = ? and semYear = ?", [req.body, req.params.semTerm, req.params.semYear], function(error, results, fields) {
       if (error) {
         res.status(500);
         res.send(JSON.stringify({ status: 500, error: error, response: null }));
@@ -76,14 +75,14 @@ router.put('/:studentID', [authenticate, isAdminAdvisorOrSameStudent], function(
   }
 });
 
-router.post('/', [authenticate, isAdminOrAdvisor], function(req, res, next) {
+router.post('/', function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
     res.send(errorMessage);
   }
   else {
-      res.locals.connection.query("INSERT INTO students SET ?", req.body, function(error, results, fields) {
+      res.locals.connection.query("INSERT INTO semesters SET ?", req.body, function(error, results, fields) {
       if (error) {
         res.status(500);
         res.send(JSON.stringify({ status: 500, error: error, response: null }));
@@ -98,8 +97,8 @@ router.post('/', [authenticate, isAdminOrAdvisor], function(req, res, next) {
   }
 });
 
-router.delete('/:studentID', [authenticate, isAdminOrAdvisor], function(req, res, next) {
-  res.locals.connection.query("DELETE FROM students WHERE studentID = ?", req.params.studentID, function(error, results, fields) {
+router.delete('/:semTerm/:semYear', function(req, res, next) {
+  res.locals.connection.query("DELETE FROM semesters WHERE semTerm = ? and semYear = ?", [req.params.semTerm, req.params.semYear], function(error, results, fields) {
     if (error) {
       res.status(500);
       res.send(JSON.stringify({ status: 500, error: error, response: null }));

@@ -2,12 +2,12 @@ const {OAuth2Client} = require('google-auth-library');
 
 async function authenticate(req, res, next) {
 	if (req.get('authorization') == null || req.get('authorization') == '' || !req.get('authorization').startsWith('Bearer ')) {
-		req.user = {user: 'none'};
+		req.user = {role: 'none'};
 		return next();
 	}
 	token = JSON.parse(req.get('authorization').slice(7));
 	if (!token.token) {
-		req.user = {user: 'none'};
+		req.user = {role: 'none'};
 		return next();
 	}
 	const client = new OAuth2Client('263273650927-8hg4d3stccism1g1jq5372e0g03ni6du.apps.googleusercontent.com');
@@ -61,7 +61,7 @@ function isAdminOrSameAdvisor(req, res, next) {
 }
 
 function isAdminAdvisorOrSameStudent(req, res, next) {
-	if (req.user.role == 'admin' || req.user.role == 'advisor' || (req.user.role == 'student' && req.params.id == req.user.id)) next();
+	if (req.user.role == 'admin' || req.user.role == 'advisor' || (req.user.role == 'student' && req.params.studentID == req.user.id)) next();
 	else res.status(401).send({error:'Insufficient permissions'});
 }
 
