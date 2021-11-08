@@ -18,7 +18,7 @@ async function authenticate(req, res, next) {
 	const payload= ticket.getPayload();
 	console.log('Google payload is '+JSON.stringify(payload));
 	let email = payload['email'];
-	const admins = ['timothyaaronwhite@gmail.com'];
+	const admins = ['timothyaaronwhite@gmail.com','awesomenerd.dv@gmail.com','braden.thompson18@gmail.com','eddie52gomez@gmail.com'];
 	if (admins.includes(email)) {
 		req.user = {role: 'admin'};
 		next();
