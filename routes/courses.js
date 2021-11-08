@@ -118,4 +118,17 @@ router.delete('/:courseNo', [authenticate, isAdminOrAdvisor], function(req, res,
   });
 });
 
+router.get('/semester/:semTerm', function(req, res, next) {
+  res.locals.connection.query("SELECT * FROM courses WHERE courseNo IN (SELECT courseNo FROM course_semesters WHERE semTerm = ?)", req.params.semTerm, function(error, results, fields) {
+    if (error) {
+      res.status(500);
+      res.send(JSON.stringify({ status: 500, error: error, response: null }));
+    } else {
+      res.status(200);
+      res.send(JSON.stringify(results));
+    }
+    res.locals.connection.end();
+  });
+});
+
 module.exports = router;
