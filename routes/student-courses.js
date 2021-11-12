@@ -1,4 +1,5 @@
 var express = require('express');
+const { authenticate, isAdminAdvisorOrSameStudent } = require('../controllers/auth');
 var router = express.Router();
 
 function validate(course) {
@@ -25,7 +26,7 @@ function validate(course) {
   return errorMessage;
 }
 
-router.get('/:studentID/courses', function(req, res, next) {
+router.get('/:studentID/courses', [authenticate, isAdminAdvisorOrSameStudent], function(req, res, next) {
   res.locals.connection.query("SELECT sc.*, c.name, c.hours FROM student_courses sc, courses c, semesters s WHERE sc.studentID = ? AND c.courseNo = sc.courseNo AND s.semTerm = sc.semTerm and s.semYear = sc.semYear ORDER BY s.startDate", req.params.studentID, function(error, results, fields) {
     if (error) {
       res.status(500);
@@ -38,7 +39,7 @@ router.get('/:studentID/courses', function(req, res, next) {
   });
 });
 
-router.get('/:studentID/courses/:courseNo', function(req, res, next) {
+router.get('/:studentID/courses/:courseNo', [authenticate, isAdminAdvisorOrSameStudent], function(req, res, next) {
   res.locals.connection.query("SELECT * FROM student_courses WHERE studentID = ? AND courseNo = ?", [req.params.studentID, req.params.courseNo], function(error, results, fields) {
     if (error) {
       res.status(500);
@@ -51,14 +52,14 @@ router.get('/:studentID/courses/:courseNo', function(req, res, next) {
   });
 });
 
-router.put('/:studentID/courses/:courseNo', function(req, res, next) {
+router.put('/:studentID/courses/:courseNo', [authenticate, isAdminAdvisorOrSameStudent], function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
     res.send(errorMessage);
   }
   else {
-    res.locals.connection.query("UPDATE student_courses SET ? WHERE studentID=? AND courseNo=?", [req.body, req.params.studentID, req.params.courseNo], function(error, results, fields) {
+    res.locals.connection.query("UPDATE student_courses SET ? WHERE studentID=? AND courseNo=? AND semTerm=? and semYear=?", [req.body, req.params.studentID, req.params.courseNo, req.body.semTerm, req.body.semYear], function(error, results, fields) {
       if (error) {
         res.status(500);
         res.send(JSON.stringify({ status: 500, error: error, response: null }));
@@ -73,7 +74,7 @@ router.put('/:studentID/courses/:courseNo', function(req, res, next) {
   }
 });
 
-router.post('/:studentID/courses', function(req, res, next) {
+router.post('/:studentID/courses', [authenticate, isAdminAdvisorOrSameStudent], function(req, res, next) {
   var errorMessage = validate(req.body);
   if (errorMessage.length > 2) {
     res.status(406);
@@ -95,7 +96,7 @@ router.post('/:studentID/courses', function(req, res, next) {
   }
 });
 
-router.delete('/:studentID/courses/:courseNo', function(req, res, next) {
+router.delete('/:studentID/courses/:courseNo', [authenticate, isAdminAdvisorOrSameStudent], function(req, res, next) {
   res.locals.connection.query("DELETE FROM student_courses WHERE studentID = ? AND courseNo = ?", [req.params.studentID, req.params.courseNo], function(error, results, fields) {
     if (error) {
       res.status(500);
