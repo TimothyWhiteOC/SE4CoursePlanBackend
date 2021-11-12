@@ -59,7 +59,7 @@ router.put('/:studentID/courses/:courseNo', [authenticate, isAdminAdvisorOrSameS
     res.send(errorMessage);
   }
   else {
-    res.locals.connection.query("UPDATE student_courses SET ? WHERE studentID=? AND courseNo=?", [req.body, req.params.studentID, req.params.courseNo], function(error, results, fields) {
+    res.locals.connection.query("UPDATE student_courses SET ? WHERE studentID=? AND courseNo=? AND semTerm=? and semYear=?", [req.body, req.params.studentID, req.params.courseNo, req.body.semTerm, req.body.semYear], function(error, results, fields) {
       if (error) {
         res.status(500);
         res.send(JSON.stringify({ status: 500, error: error, response: null }));
