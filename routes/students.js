@@ -21,10 +21,6 @@ router.get('/', function(req, res, next) {
 function validate(course) {
   var errorMessage = "[";
 
-  if (course.studentID == null || course.studentID.length == 0) {
-    errorMessage +=
-      '{"attributeName":"studentID", "message":"Must have studentID"}';
-  }
   if (course.fName == null || course.fName.length == 0) {
     if (errorMessage.length > 1) errorMessage += ",";
     errorMessage += '{"attributeName":"fName", "message":"Must have first name"}';
